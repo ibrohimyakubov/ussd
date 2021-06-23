@@ -1,21 +1,20 @@
-from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
-
 from .models import *
+from django.contrib import admin
+from .models import Internet
 
 
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ['title', 'image_tag']
-
-
-class InternetAdmin(admin.ModelAdmin):
-    list_display = ['title', 'company']
+    search_fields = ('title',)
 
 
 class InternetAdmin2(DraggableMPTTAdmin):
     mptt_indent_field = "title"
     list_display = ('tree_actions', 'indented_title',
                     'related_products_count', 'related_products_cumulative_count')
+    list_filter = ('company',)
+    search_fields = ('title',)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -47,14 +46,12 @@ class InternetAdmin2(DraggableMPTTAdmin):
     related_products_cumulative_count.short_description = 'Related products (in tree)'
 
 
-class TarifAdmin(admin.ModelAdmin):
-    list_display = ['tariflar', 'nomi', 'muddati', 'narxi']
-
-
 class TarifAdmin2(DraggableMPTTAdmin):
     mptt_indent_field = "title"
     list_display = ('tree_actions', 'indented_title',
                     'related_products_count', 'related_products_cumulative_count')
+    list_filter = ('company',)
+    search_fields = ('title',)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -87,11 +84,26 @@ class TarifAdmin2(DraggableMPTTAdmin):
 
 
 class I_PaketAdmin(admin.ModelAdmin):
-    list_display = ['internet', 'company', 'nomi']
+    list_display = ['nomi','internet', 'company']
+    list_filter = ('company',)
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj, change, **kwargs)
+        form.base_fields['hajmi'].label = 'Hajmi (MB)'
+        form.base_fields['narxi'].label = 'Narxi (UZS)'
+        return form
+    autocomplete_fields = ('internet', 'company')
 
 
 class T_PaketAdmin(admin.ModelAdmin):
-    list_display = ['tariflar', 'company', 'nomi']
+    list_display = ['nomi','tariflar', 'company']
+    autocomplete_fields = ('tariflar', 'company')
+    list_filter = ('company',)
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj, change, **kwargs)
+        form.base_fields['muddati'].label = 'Muddati (kun)'
+        form.base_fields['narxi'].label = 'Narxi (UZS)'
+        return form
 
 
 admin.site.register(Internet, InternetAdmin2)
