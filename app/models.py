@@ -7,16 +7,19 @@ from mptt.models import MPTTModel
 
 class Company(models.Model):
     COMPANY = [
-        ('Usell', 'Usell'),
-        ('Belinee', 'Belinee'),
-        ('MobiUz', 'MobiUz'),
-        ('Uzmobile', 'Uzmobile'),
+        ('Ucell', 'ucell'),
+        ('Beeline', 'beeline'),
+        ('MobiUz', 'mobiuz'),
+        ('Uzmobile', 'uzmobile'),
     ]
     title = models.CharField(choices=COMPANY, max_length=20)
     image = models.ImageField(upload_to='company/')
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name_plural = "Kompaniya"
 
     def image_tag(self):
         return mark_safe('<img src="{}" height="50"/>'.format(self.image.url))
@@ -26,11 +29,14 @@ class Company(models.Model):
 
 class Internet(MPTTModel):
     parent = TreeForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE)
-    title = models.CharField(max_length=20, blank=False)
+    title = models.CharField(max_length=56, blank=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     class MPTTMeta:
         order_insertion_by = ['title']
+
+    class Meta:
+        verbose_name_plural = "Internet"
 
     def __str__(self):
         return self.title
@@ -42,19 +48,25 @@ class I_Paket(models.Model):
     nomi = models.CharField(max_length=200, blank=False)
     hajmi = models.IntegerField()
     narxi = models.FloatField()
-    haqida = RichTextField()
+    haqida = RichTextField(blank=True, null=True)
 
     def __str__(self):
         return self.nomi
 
+    class Meta:
+        verbose_name_plural = "Internetlar"
+
 
 class Tariflar(MPTTModel):
     parent = TreeForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE)
-    title = models.CharField(max_length=20, blank=False)
+    title = models.CharField(max_length=56, blank=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name_plural = "Tarif"
 
 
 class T_Paket(models.Model):
@@ -68,12 +80,18 @@ class T_Paket(models.Model):
     def __str__(self):
         return self.nomi
 
+    class Meta:
+        verbose_name_plural = "Tariflar"
+
 
 class Daqiqalar(models.Model):
     title = models.CharField(max_length=20, blank=False)
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name_plural = "Daqiqa"
 
 
 class D_Paket(models.Model):
@@ -82,6 +100,9 @@ class D_Paket(models.Model):
     muddati = models.IntegerField()
     narxi = models.FloatField()
     haqida = RichTextField()
+
+    class Meta:
+        verbose_name_plural = "Daqiqalar"
 
     def __str__(self):
         return self.nomi
@@ -92,6 +113,9 @@ class SMS(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name_plural = "SMS"
 
 
 class SMS_Paket(models.Model):
@@ -104,12 +128,18 @@ class SMS_Paket(models.Model):
     def __str__(self):
         return self.nomi
 
+    class Meta:
+        verbose_name_plural = "SMSlar"
+
 
 class Foydali(models.Model):
     title = models.CharField(max_length=20, blank=False)
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name_plural = "Foyda"
 
 
 class F_Paket(models.Model):
@@ -120,12 +150,18 @@ class F_Paket(models.Model):
     def __str__(self):
         return self.nomi
 
+    class Meta:
+        verbose_name_plural = "Foydali"
+
 
 class Xizmatlar(models.Model):
     title = models.CharField(max_length=20, blank=False)
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name_plural = "Xizmat"
 
 
 class X_Paket(models.Model):
@@ -135,3 +171,6 @@ class X_Paket(models.Model):
 
     def __str__(self):
         return self.nomi
+
+    class Meta:
+        verbose_name_plural = "Xizmatlar"
